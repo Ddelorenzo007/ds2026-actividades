@@ -5,6 +5,7 @@
     --text-color: #333;
     --font-family: Arial, Helvetica, sans-serif;
     --border-radius: 8px;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 body {
@@ -67,7 +68,7 @@ ul {
     border-radius: var(--border-radius);
     padding: 20px;
     margin: 10px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--shadow)
 }
 
 * {

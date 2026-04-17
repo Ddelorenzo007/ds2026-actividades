@@ -1,11 +1,3 @@
-// Crear un array con al menos 8 números
-// Usando for o for...of, calcular y mostrar en consola:
-// * La suma total
-// * El promedio
-// * El número mayor
-// * El número menor
-// Crear una función generarAsteriscos(n) que reciba un número y retorne un string con esa cantidad de asteriscos (ej: generarAsteriscos(5) → "*****"). Usar un bucle for.
-
 const numeros = [9, 5, 7, 12, 8, 21, 12, 1, 17];
 
 let sumaTotal = 0;

@@ -1,10 +1,3 @@
-// Enganchar los botones: 
-// - Solo disponibles → renderizar(librosDisponibles()). 
-// - Ver todos → renderizar(catalogo). 
-// Al cargar la página, mostrar todos los libros por defecto. 
-// Traspilar: tsc app.ts 
-// Abrir en el navegador y probar los tres botones.
-
 const input = document.getElementById("filtroAutor") as HTMLInputElement;
 const botonFiltrar = document.getElementById("filtrar") as HTMLButtonElement;
 const botonDisponibles = document.getElementById("mostrarDisponibles") as HTMLButtonElement;

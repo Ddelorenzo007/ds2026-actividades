@@ -1,21 +1,16 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-
+import { Link } from 'react-router-dom'
+import type libroCardProps from '../types/libroCardProps';
 import './LibroCard.css'
 
-type LibroCardProps = {
-  titulo: string
-  autor: string
-  precio: number
-  imagen: string
-}
-
 function LibroCard({
+  id,
   titulo,
   autor,
   precio,
   imagen
-}: LibroCardProps) {
+}: libroCardProps) {
 
   return (
     <Card className="h-100 shadow-sm">
@@ -30,7 +25,11 @@ function LibroCard({
 
         <Card.Text>${precio.toFixed(2)}</Card.Text>
 
-        <Button variant="outline-primary">
+       <Button
+          as={Link as any}
+          to={`/catalogo/${id}`}
+          variant="outline-primary"
+        >
           Ver más
         </Button>
       </Card.Body>

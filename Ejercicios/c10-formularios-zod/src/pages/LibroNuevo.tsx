@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import type libroCardProps from '../types/libroCardProps';
+import { libroSchema } from '../schemas/libroSchema';
 
 const IMG_PLACEHOLDER = 'https://placehold.co/300x400?text=Libro';
+
 interface Props {
     onAgregar: (libro: libroCardProps) => void;
 }
@@ -16,25 +18,34 @@ function LibroNuevo({ onAgregar }: Props) {
         const { name, value, type, checked } = e.target;
         setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
     };
-    const validar = () => {
-        const err: Record<string, string> = {};
-        if (!form.titulo.trim()) err.titulo = 'El título es obligatorio';
-        if (!form.autor.trim()) err.autor = 'El autor es obligatorio';
-        if (form.precio === '' || Number(form.precio) <= 0) err.precio =
-            'El precio debe ser mayor a 0';
-        return err;
-    };
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const err = validar();
-        if (Object.keys(err).length > 0) { setErrores(err); return; }
-        onAgregar({
-            id: Date.now(), titulo: form.titulo, autor: form.autor,
-            precio: Number(form.precio), imagen: IMG_PLACEHOLDER,
-            disponible: form.disponible,
-        });
-        navigate('/catalogo');
-    };
+    e.preventDefault();
+
+    const resultado = libroSchema.safeParse({
+        ...form,
+        precio: form.precio === '' ? undefined : Number(form.precio),
+    });
+
+    if (!resultado.success) {
+        const err: Record<string, string> = {};
+        for (const issue of resultado.error.issues) {
+            const campo = issue.path[0] as string;
+            err[campo] = issue.message;
+        }
+        setErrores(err);
+        return;
+    }
+
+    onAgregar({
+        id: Date.now(),
+        titulo: resultado.data.titulo,
+        autor: resultado.data.autor,
+        precio: resultado.data.precio,
+        imagen: IMG_PLACEHOLDER,
+        disponible: resultado.data.disponible,
+    });
+    navigate('/catalogo');
+};
 
     return (
         <Form onSubmit={handleSubmit} className="container py-4"

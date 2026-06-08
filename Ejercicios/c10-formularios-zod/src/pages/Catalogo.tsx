@@ -2,6 +2,7 @@ import LibroCard from '../components/LibroCard';
 import type  libroCardProps  from '../types/libroCardProps';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
+import '../assets/librosDestacados.css'
 
 interface LibrosProps {
   libros: libroCardProps[];

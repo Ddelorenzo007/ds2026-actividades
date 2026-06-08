@@ -1,6 +1,7 @@
 import LibroCard from '../components/LibroCard';
 import type  libroCardProps  from '../types/libroCardProps';
 import Button from 'react-bootstrap/Button';
+import '../assets/LibrosDestacados.css';
 import { useNavigate } from 'react-router-dom';
 
 interface LibrosProps {

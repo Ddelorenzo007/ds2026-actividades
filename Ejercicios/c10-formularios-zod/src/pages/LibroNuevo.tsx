@@ -1,83 +1,97 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
-import type libroCardProps from '../types/libroCardProps';
-import { libroSchema } from '../schemas/libroSchema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import type  libroCardProps from '../types/libroCardProps';
+
+
+// 1. Schema de Zod
+export const libroSchema = z.object({
+  titulo: z.string().trim().min(1, 'El título es obligatorio'),
+  autor: z.string().trim().min(1, 'El autor es obligatorio'),
+  precio: z.number().positive('El precio debe ser mayor a 0'),
+  disponible: z.boolean()
+});
+
+// Tipo inferido automáticamente del schema
+export type LibroValidado = z.infer<typeof libroSchema>;
 
 const IMG_PLACEHOLDER = 'https://placehold.co/300x400?text=Libro';
 
 interface Props {
-    onAgregar: (libro: libroCardProps) => void;
+  onAgregar: (libro: libroCardProps) => void;
 }
 
 function LibroNuevo({ onAgregar }: Props) {
-    const navigate = useNavigate();
-    const [form, setForm] = useState({ titulo: '', autor: '', precio: '', disponible: true });
-    const [errores, setErrores] = useState<Record<string, string>>({});
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
-    };
-    const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const navigate = useNavigate();
 
-    const resultado = libroSchema.safeParse({
-        ...form,
-        precio: form.precio === '' ? undefined : Number(form.precio),
-    });
+  // 2. Configuración de React Hook Form
+  const { register, handleSubmit, formState: { errors } } = useForm<LibroValidado>({
+    resolver: zodResolver(libroSchema)
+  });
 
-    if (!resultado.success) {
-        const err: Record<string, string> = {};
-        for (const issue of resultado.error.issues) {
-            const campo = issue.path[0] as string;
-            err[campo] = issue.message;
-        }
-        setErrores(err);
-        return;
-    }
-
+  // 3. Manejador del submit (solo se ejecuta si la validación es exitosa)
+  const onSubmit = (data: LibroValidado) => {
     onAgregar({
-        id: Date.now(),
-        titulo: resultado.data.titulo,
-        autor: resultado.data.autor,
-        precio: resultado.data.precio,
-        imagen: IMG_PLACEHOLDER,
-        disponible: resultado.data.disponible,
+      id: Date.now(),
+      titulo: data.titulo,
+      autor: data.autor,
+      precio: data.precio,
+      imagen: IMG_PLACEHOLDER,
+      disponible: data.disponible,
     });
+    
     navigate('/catalogo');
-};
+  };
 
-    return (
-        <Form onSubmit={handleSubmit} className="container py-4"
-            style={{ maxWidth: 480 }}>
-            <h2>Nuevo libro </h2>
-            <Form.Group className="mb-3">
-                <Form.Label >Título</Form.Label >
-                <Form.Control name="titulo" value={form.titulo}
-                    onChange={handleChange} isInvalid={!!errores.titulo} />
-                <Form.Control.Feedback
-                    type="invalid" >{errores.titulo}</Form.Control.Feedback >
-            </Form.Group >
-            <Form.Group className="mb-3">
-                <Form.Label >Autor</Form.Label >
-                <Form.Control name="autor" value={form.autor}
-                    onChange={handleChange} isInvalid={!!errores.autor} />
-                <Form.Control.Feedback
-                    type="invalid" >{errores.autor}</Form.Control.Feedback >
-            </Form.Group >
-            <Form.Group className="mb-3">
-                <Form.Label >Precio</Form.Label >
-                <Form.Control type="number" name="precio"
-                    value={form.precio} onChange={handleChange}
-                    isInvalid={!!errores.precio} />
-                <Form.Control.Feedback
-                    type="invalid" >{errores.precio}</Form.Control.Feedback >
-            </Form.Group >
-            <Form.Check className="mb-3" label="Disponible"
-                name="disponible" checked={form.disponible} onChange={handleChange}
-            />
-            <Button type="submit" >Agregar libro </Button>
-        </Form>
-    );
+  return (
+    <Form onSubmit={handleSubmit(onSubmit)} className="container py-4" style={{ maxWidth: 480 }}>
+      <h2>Nuevo libro</h2>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Título</Form.Label>
+        <Form.Control
+          {...register('titulo')}
+          isInvalid={!!errors.titulo}
+        />
+        <Form.Control.Feedback type="invalid">
+          {errors.titulo?.message}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Autor</Form.Label>
+        <Form.Control
+          {...register('autor')}
+          isInvalid={!!errors.autor}
+        />
+        <Form.Control.Feedback type="invalid">
+          {errors.autor?.message}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Precio</Form.Label>
+        <Form.Control
+          type="number"
+          {...register('precio', { valueAsNumber: true })}
+          isInvalid={!!errors.precio}
+        />
+        <Form.Control.Feedback type="invalid">
+          {errors.precio?.message}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Check
+        className="mb-3"
+        label="Disponible"
+        {...register('disponible')}
+      />
+
+      <Button type="submit">Agregar libro</Button>
+    </Form>
+  );
 }
+
 export default LibroNuevo;

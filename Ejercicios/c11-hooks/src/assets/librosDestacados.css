@@ -14,9 +14,3 @@
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 2rem;
 }
-
-.boton {
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: flex-end;
-}

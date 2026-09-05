@@ -5,3 +5,10 @@ export async function registrar(req: Request, res: Response) {
   const usuario = await authService.registrar(req.body);
   return res.status(201).json(usuario);
 }
+
+export async function login(req: Request, res: Response) {
+  const resultado = await authService.login(req.body);
+  // Mismo mensaje si el mail no existe o si la contraseña está mal.
+  if (!resultado) return res.status(401).json({ error: "Credenciales inválidas" });
+  return res.json(resultado);
+}

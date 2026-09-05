@@ -12,3 +12,9 @@ export async function login(req: Request, res: Response) {
   if (!resultado) return res.status(401).json({ error: "Credenciales inválidas" });
   return res.json(resultado);
 }
+
+export async function yo(req: Request, res: Response) {
+  const usuario = await authService.findById(req.usuario!.id);
+  if (!usuario) return res.status(404).json({ error: "Usuario no encontrado" });
+  return res.json(usuario);
+}

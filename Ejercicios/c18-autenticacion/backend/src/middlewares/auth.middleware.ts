@@ -20,3 +20,14 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ error: "Token inválido" });
   }
 }
+
+// ¿Podés? → 403 si sé quién sos y no alcanza
+export function authorize(...roles: Array<"ADMIN" | "CLIENTE">) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.usuario) return res.status(401).json({ error: "No autenticado" });
+    if (!roles.includes(req.usuario.rol)) {
+      return res.status(403).json({ error: "No tenés permiso para esta operación" });
+    }
+    next();
+  };
+}

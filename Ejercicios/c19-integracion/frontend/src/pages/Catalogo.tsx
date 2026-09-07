@@ -6,7 +6,7 @@ import { Spinner, Alert } from 'react-bootstrap';
 
 function Libros() {
 
-  const { data: libros, loading, error } = useFetch<LibroCardProps[]>('/libros.json');
+  const { data: libros, loading, error } = useFetch<LibroCardProps[]>('/libros');
 
   if (loading) return <Spinner animation="border" />;
   if (error)   return <Alert variant="danger">{error}</Alert>;

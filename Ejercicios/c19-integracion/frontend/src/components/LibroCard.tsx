@@ -21,7 +21,7 @@ function LibroCard({
       <Card.Body>
         <Card.Title>{titulo}</Card.Title>
 
-        <Card.Text>{autor}</Card.Text>
+        <Card.Text>{autor.nombre}</Card.Text>
 
         <Card.Text>${precio.toFixed(2)}</Card.Text>
 

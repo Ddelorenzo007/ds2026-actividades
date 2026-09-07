@@ -1,8 +1,14 @@
-export default interface libroCardProps {
-  id: number
-  titulo: string
-  autor: string
-  precio: number
-  imagen: string
-  disponible: boolean
+export interface LibroCardProps {
+  id: number;
+  titulo: string;
+  autorId: number;
+  autor: Autor;
+  precio: number;
+  imagen: string;
+  disponible: boolean;
+}
+export interface Autor { 
+  id: number; 
+  nombre: string; 
+  nacionalidad: string 
 }

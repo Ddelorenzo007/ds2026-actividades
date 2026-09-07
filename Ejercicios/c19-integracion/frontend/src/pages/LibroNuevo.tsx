@@ -3,7 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import type  libroCardProps from '../types/libroCardProps';
+import type { LibroCardProps } from '../types/libroCardProps';
 
 
 // 1. Schema de Zod
@@ -20,7 +20,7 @@ export type LibroValidado = z.infer<typeof libroSchema>;
 const IMG_PLACEHOLDER = 'https://placehold.co/300x400?text=Libro';
 
 interface Props {
-  onAgregar: (libro: libroCardProps) => void;
+  onAgregar: (libro: LibroCardProps) => void;
 }
 
 function LibroNuevo({ onAgregar }: Props) {

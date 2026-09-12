@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiFetch } from '../services/api';
 
 export function useFetch<T>(url: string) {
   const [data, setData] = useState<T | null>(null);
@@ -10,26 +11,15 @@ export function useFetch<T>(url: string) {
       try {
         setLoading(true);
         setError(null);
-
-        // Espera de 1 segundo
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          throw new Error(`Error ${res.status}: No se pudieron cargar los datos.`);
-        }
-
-        const data = await res.json();
-        setData(data);
-
+        
+        setData(await apiFetch<T>(url));
+        
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Error desconocido');
       } finally {
         setLoading(false);
       }
     };
-
     cargar();
   }, [url]);
 

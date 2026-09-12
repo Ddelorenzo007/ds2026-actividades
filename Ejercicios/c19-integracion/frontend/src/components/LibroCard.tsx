@@ -1,39 +1,33 @@
+import './LibroCard.css';
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import { Link } from 'react-router-dom'
-import type libroCardProps from '../types/libroCardProps';
-import './LibroCard.css'
+import type { LibroCardProps } from '../types/libroCardProps';
 
-function LibroCard({
-  id,
-  titulo,
-  autor,
-  precio,
-  imagen
-}: libroCardProps) {
-
+function LibroCard({ titulo, autor, precio, imagen, disponible }: LibroCardProps) {
+  const [disponibilidad, setDisponibilidad] = useState<boolean>(disponible);
   return (
-    <Card className="h-100 shadow-sm">
-
-      <Card.Img
-        variant="top" src={imagen} className="libro-img"/>
-
+    <Card style={{ width: '18rem' }}>
+      <div className="libro-img-div">
+        <Card.Img variant="top" src={imagen} className="libro-img" />
+        {!disponibilidad ? <p className="false">Alquilado</p> : <p className="true">Disponible</p>}
+      </div>
       <Card.Body>
         <Card.Title>{titulo}</Card.Title>
-
-        <Card.Text>{autor.nombre}</Card.Text>
-
-        <Card.Text>${precio.toFixed(2)}</Card.Text>
-
-       <Button
-          as={Link as any}
-          to={`/catalogo/${id}`}
-          variant="outline-primary"
-        >
-          Ver más
-        </Button>
+        <Card.Text>
+          <div className="autor">{autor.nombre}</div>
+          <span className="precio">${precio}</span>
+        </Card.Text>
+        <div className="d-flex gap-2">
+          <Button 
+            variant="primary"
+            className="cambiar-estado"
+            onClick={() => setDisponibilidad(!disponibilidad)}
+          >
+            {disponibilidad ? 'Alquilar' : 'Devolver'}
+          </Button>
+        </div>
       </Card.Body>
-
     </Card>
   );
 }

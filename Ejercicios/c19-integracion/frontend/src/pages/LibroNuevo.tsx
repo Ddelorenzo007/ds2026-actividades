@@ -1,53 +1,45 @@
 import { useNavigate } from 'react-router-dom';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Spinner, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { z } from 'zod';
-import type { LibroCardProps } from '../types/libroCardProps';
+import { libroSchema, type LibroValidado } from '../schemas/libroSchema';
+import { useFetch } from '../hooks/useFetch';
+import { apiFetch } from '../services/api';
+import type { Autor, LibroCardProps } from '../types/libroCardProps';
 
+type LibroFormulario = z.input<typeof libroSchema>;
 
-// 1. Schema de Zod
-export const libroSchema = z.object({
-  titulo: z.string().trim().min(1, 'El título es obligatorio'),
-  autor: z.string().trim().min(1, 'El autor es obligatorio'),
-  precio: z.number().positive('El precio debe ser mayor a 0'),
-  disponible: z.boolean()
-});
-
-// Tipo inferido automáticamente del schema
-export type LibroValidado = z.infer<typeof libroSchema>;
-
-const IMG_PLACEHOLDER = 'https://placehold.co/300x400?text=Libro';
-
-interface Props {
-  onAgregar: (libro: LibroCardProps) => void;
-}
-
-function LibroNuevo({ onAgregar }: Props) {
+function LibroNuevo() {
   const navigate = useNavigate();
+  const [errorApi, setErrorApi] = useState<string | null>(null);
+  const { data: autores, loading, error } = useFetch<Autor[]>('/autores');
 
-  // 2. Configuración de React Hook Form
-  const { register, handleSubmit, formState: { errors } } = useForm<LibroValidado>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LibroFormulario, unknown, LibroValidado>({
     resolver: zodResolver(libroSchema)
   });
 
-  // 3. Manejador del submit (solo se ejecuta si la validación es exitosa)
-  const onSubmit = (data: LibroValidado) => {
-    onAgregar({
-      id: Date.now(),
-      titulo: data.titulo,
-      autor: data.autor,
-      precio: data.precio,
-      imagen: IMG_PLACEHOLDER,
-      disponible: data.disponible,
-    });
-    
-    navigate('/catalogo');
+  const onSubmit = async (data: LibroValidado) => {
+    try {
+      await apiFetch<LibroCardProps>('/libros', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      navigate('/catalogo');
+    } catch (e) {
+      setErrorApi(e instanceof Error ? e.message : 'Error desconocido');
+    }
   };
+
+  if (loading) return <Spinner animation="border" />;
+  if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="container py-4" style={{ maxWidth: 480 }}>
       <h2>Nuevo libro</h2>
+
+      {errorApi && <Alert variant="danger">{errorApi}</Alert>}
 
       <Form.Group className="mb-3">
         <Form.Label>Título</Form.Label>
@@ -62,12 +54,17 @@ function LibroNuevo({ onAgregar }: Props) {
 
       <Form.Group className="mb-3">
         <Form.Label>Autor</Form.Label>
-        <Form.Control
-          {...register('autor')}
-          isInvalid={!!errors.autor}
-        />
+        <Form.Select
+          {...register('autorId')}
+          isInvalid={!!errors.autorId}
+        >
+          <option value="">Seleccioná un autor…</option>
+          {(autores ?? []).map((autor) => (
+            <option key={autor.id} value={autor.id}>{autor.nombre}</option>
+          ))}
+        </Form.Select>
         <Form.Control.Feedback type="invalid">
-          {errors.autor?.message}
+          {errors.autorId?.message}
         </Form.Control.Feedback>
       </Form.Group>
 
@@ -80,6 +77,18 @@ function LibroNuevo({ onAgregar }: Props) {
         />
         <Form.Control.Feedback type="invalid">
           {errors.precio?.message}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Imagen (URL)</Form.Label>
+        <Form.Control
+          placeholder="https://…"
+          {...register('imagen')}
+          isInvalid={!!errors.imagen}
+        />
+        <Form.Control.Feedback type="invalid">
+          {errors.imagen?.message}
         </Form.Control.Feedback>
       </Form.Group>
 

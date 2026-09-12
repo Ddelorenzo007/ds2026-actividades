@@ -1,6 +1,6 @@
 import LibroCard from '../components/LibroCard';
 import type { LibroCardProps } from '../types/libroCardProps';
-import '../assets/styles/LibrosDestacados.css';
+import '../assets/LibrosDestacados.css';
 import { useFetch } from '../hooks/useFetch';
 import { useBusqueda } from '../context/BusquedaContext'; 
 import { Spinner, Alert } from 'react-bootstrap';

@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 function NavBar() {
   const { filtro, setFiltro } = useBusqueda(); 
   const navigate = useNavigate();              
-  const { usuario, logout } = useAuth();
+  const { usuario, logout, tieneRol } = useAuth();
   const buscar = (e: FormEvent) => {
     e.preventDefault();
     navigate('/catalogo');
@@ -30,6 +30,7 @@ function NavBar() {
           <Nav className="me-auto">
             <Nav.Link href="#">Contacto</Nav.Link>
             <Nav.Link href="/catalogo">Catálogo</Nav.Link>
+            {tieneRol('ADMIN') && <Nav.Link as={NavLink} to="/libros/nuevo">Nuevo libro</Nav.Link>}
             <Form onSubmit={buscar} className="ms-lg-3" style={{ maxWidth: '18rem' }}>
               <InputGroup>
                 <Form.Control
@@ -43,7 +44,14 @@ function NavBar() {
                 </Button>
               </InputGroup>
             </Form>
-            <button className="btn-login ms-lg-3 mt-2 mt-lg-0" onClick={manejarSesion}>
+            <span className="saludo-usuario">
+              {usuario ? `Hola, ${usuario.nombre}` : 'Hola, invitado'}
+            </span>
+
+            <button
+              className="btn-login ms-lg-3 mt-2 mt-lg-0"
+              onClick={manejarSesion}
+            >
               {usuario ? 'Salir' : 'Ingresar'}
             </button>
           </Nav>

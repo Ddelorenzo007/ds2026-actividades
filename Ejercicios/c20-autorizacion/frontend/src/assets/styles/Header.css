@@ -40,3 +40,13 @@
 .custom-header .navbar-toggler:focus {
   box-shadow: 0 0 0 0.15rem var(--nude);
 }
+
+.saludo-usuario {
+  color: #495057;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  white-space: nowrap;
+}

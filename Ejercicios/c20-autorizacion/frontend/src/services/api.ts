@@ -2,6 +2,15 @@ import { obtenerToken } from './sesion';
 
 const BASE = import.meta.env.VITE_API_URL;
 
+export class ApiError extends Error { 
+  status: number;
+  
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
 export async function apiFetch<T>(ruta: string, opciones: RequestInit = {}): Promise<T> {
   const token = obtenerToken();
 
@@ -15,8 +24,15 @@ export async function apiFetch<T>(ruta: string, opciones: RequestInit = {}): Pro
   });
 
   const cuerpo = await res.json().catch(() => null);
-    if (!res.ok) throw new Error(cuerpo?.error ?? `Error ${res.status}`);
-
   
+  //chequea status 401 y que haya token para no desloguearte
+  if (res.status === 401 && token) {
+    window.dispatchEvent(new Event('sesion-expirada'));
+  }
+
+  if (!res.ok) {
+    throw new ApiError(res.status, cuerpo?.error ?? `Error ${res.status}`);
+  }
+
   return cuerpo as T;
 }

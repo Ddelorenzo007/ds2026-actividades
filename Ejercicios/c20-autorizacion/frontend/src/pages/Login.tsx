@@ -1,9 +1,6 @@
-import { apiFetch } from '../services/api';
-import { guardarToken } from '../services/sesion';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import type { LoginValidado } from '../schemas/loginSchema';
-import type { Sesion } from '../types/sesionType';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../schemas/loginSchema';

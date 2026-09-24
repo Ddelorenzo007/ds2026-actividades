@@ -7,10 +7,13 @@ import type { Sesion } from '../types/sesionType';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../schemas/loginSchema';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
     const navigate = useNavigate();
     const [errorApi, setErrorApi] = useState<string | null>(null);
+
+    const { login } = useAuth(); 
 
     // Inicializamos react-hook-form conectado al esquema de Zod
     const { register, handleSubmit, formState: { errors } } = useForm<LoginValidado>({
@@ -19,9 +22,7 @@ export default function Login() {
 
     const onSubmit = async (datos: LoginValidado) => {
     try {
-        const sesion = await apiFetch<Sesion>('/auth/login',
-        { method: 'POST', body: JSON.stringify(datos) });
-        guardarToken(sesion.token);
+        await login(datos);
         navigate('/catalogo');
     } catch (e) {
         setErrorApi(e instanceof Error ? e.message : 'Error desconocido');

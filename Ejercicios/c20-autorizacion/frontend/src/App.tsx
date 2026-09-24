@@ -5,22 +5,25 @@ import Login from './pages/Login';
 import LibroNuevo from './pages/LibroNuevo';
 import { Routes, Route } from 'react-router-dom';
 import { BusquedaProvider } from './context/BusquedaContext'; 
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   
   return (
-    <BusquedaProvider>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/catalogo" 
-            element={<Libros />}
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/libros/nuevo" element={<LibroNuevo />} /> 
-        </Routes>
-      </Layout>
-    </BusquedaProvider>
+    <AuthProvider>
+      <BusquedaProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/catalogo" 
+              element={<Libros />}
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/libros/nuevo" element={<LibroNuevo />} /> 
+          </Routes>
+        </Layout>
+      </BusquedaProvider>
+    </AuthProvider>
   );
 }
 

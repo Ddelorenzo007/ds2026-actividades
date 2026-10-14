@@ -14,7 +14,7 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }){
 
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }){
 export function useAuth() {
   const contexto = useContext(AuthContext);
   if (!contexto) {
-    throw new Error('useAuth debe usarse dentro de <AuthProvider>');
+    throw new Error('useAuth debe usarse dentro de ');
   }
   return contexto;
 }
